@@ -77,7 +77,7 @@ def roll_dice():
     # print(Dice[r-1])
     print(r,turn)
 player1_btn = tk.Button (root,text="Player 1",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
-player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
+# player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
 def is_winner():
     global position1,position2
     if position1==100:
@@ -132,8 +132,8 @@ def start_game():
     player1_btn = tk.Button (root,text="Player 1",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
     player1_btn.place(x=1000,y=0)
     # Player 2
-    player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
-    player2_btn.place(x=1000,y=500)
+    # player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
+    # player2_btn.place(x=1000,y=500)
     # quit 
     quit_btn = tk.Button (root,text="Quit",command=quit_game,height=3,width=16,bg="red",fg="black",font=("Cursive",16,"bold"),activebackground="white")
     quit_btn.place(x=1000,y=600)
