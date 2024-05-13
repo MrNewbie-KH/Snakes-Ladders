@@ -1,12 +1,54 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 import random
-# the main window
+from socket import *
+from threading import Thread
+
+s = socket(AF_INET, SOCK_STREAM)
+s.connect(('127.0.0.1', 8000))
+# GLOBALS
+Dice = []
+Index={} 
+Snakes={32:10,36:6,48:26,62:18,88:24,95:56,97:78}
+Ladders={1:38,4:14,8:30,28:76,21:42,50:67,71:92,80:99}
+position1=0
+position2=0
+global_turn =0
+lol = s.recv(1024).decode()
+if lol =="first":
+    global_turn = 1
+else:
+    global_turn =2
+turn=1
+def move_coin(r,turn):
+    global player1_coin,player2_coin, Index
+    if turn==1:
+        player1_coin.place(x=Index[r][0],y=Index[r][1])
+    else:
+        player2_coin.place(x=Index[r][0],y=Index[r][1])
+
+
+def receive_message():
+    while True:
+        p = s.recv(1024).decode()
+        move_coin(int(p),turn)
+        print(f"position {p} of user {turn}")
+
+
+def send_number(r):
+    s.send(str(r).encode('utf-8'))
+
+print(global_turn)
+
+receive = Thread(target=receive_message)
+receive.start()
+
+#    ==============================================================
 root = tk.Tk()
-root.geometry("1200x800")
+root.geometry("800x600")
 root.title("Snakes and Ladders")
 # the frame holding the main window
-frame1 = tk.Frame(root, width=1200, height=800, relief='raised')
+frame1 = tk.Frame(root, width=800, height=600, relief='raised')
 frame1.place(x=0, y=0)
 
 
@@ -15,69 +57,73 @@ frame1.place(x=0, y=0)
 board_image = ImageTk.PhotoImage(Image.open("./images/board.webp"))
 Lab = tk.Label(frame1, image=board_image)
 Lab.place(x=0, y=0)
-# GLOBALS
-Dice = []
-Index={} # store x and y of each number
-Snakes={32:10,36:6,48:26,62:18,88:24,95:56,97:78}
-Ladders={1:38,4:14,8:30,28:76,21:42,50:67,71:92,80:99}
-position1=None
-position2=None
 
-def check_ladder(turn):
+
+def check_ladder():
+    global turn ,global_turn
     global position1,position2,Ladders
-    flag=0
-    if turn==1:
+    if turn==global_turn and turn==1:
         if position1 in Ladders:
-            position1=Ladders[position1]
-            flag=1
-    else:
+             position1=Ladders[position1]
+             return position1
+        else:
+            return position1
+    elif turn==global_turn and turn==2:
         if position2 in Ladders:
-            position2=Ladders[position2]
-            flag=1
-    return flag
-def check_snake(turn):
+             position2=Ladders[position2]
+             return position2
+        else:
+            return position2
+def check_snake():
+    global turn,global_turn
     global position1,position2,Snakes
-    flag=0
-    if turn==1:
+    if turn==global_turn and turn==1:
         if position1 in Snakes:
             position1=Snakes[position1]
-            flag=1
-    else:
+            return position1
+        else:
+            return position1
+    elif turn==global_turn and turn==2:
         if position2 in Snakes:
             position2=Snakes[position2]
-            flag=1
-    return flag
+            return position2
+        else:
+            return position2
 def roll_dice():
-    global Dice, turn ,position1,position2
+    global Dice, turn ,position1,position2,global_turn
     r = random.randint(1, 6)
-    if turn == 1 :
+    # send_number(r)
+    if turn==global_turn and turn==1:
+
         if (position1+r)<=100:
             position1=position1+r
-        ladder=check_ladder(turn)
-        check_snake(turn)
-        move_coin(turn, position1)
-        if r!=6 and ladder!=1:
-            turn=2
-    else:
+        position1=check_ladder()
+        position1=check_snake()
+        move_coin( int(position1),turn)
+        send_number(int(position1))
+    
+    elif turn==global_turn and turn==2:
         if (position2+r)<=100:
             position2=position2+r
-        ladder=check_ladder(turn)
-        check_snake(turn)
-        move_coin(turn, position2)
-        if r!=6 and ladder!=1:
-            turn=1
+        position2=check_ladder()
+        position2=check_snake()
+        move_coin( int(position2),turn)
+        send_number(int(position2))
     is_winner()
+    print(r,turn)
+    if turn == 1 :
+        turn = 2
+    else:
+        turn = 1 
 
 
         
     b2 = tk.Button(root,image=Dice[r-1],height=80,width=80)
     # b2.place(x=1250,y=200)
     b2.image = Dice[r-1]
-    b2.place(x=1050, y=100)  
+    b2.place(x=550, y=300)  
     # print(Dice[r-1])
-    print(r,turn)
-player1_btn = tk.Button (root,text="Player 1",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
-# player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
+player1_btn = tk.Button (root,text="Play",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
 def is_winner():
     global position1,position2
     if position1==100:
@@ -102,12 +148,6 @@ def load_images():
 
 # Function to simulate dice roll
 
-def move_coin(turn,r):
-    global player1_coin,player2_coin, Index
-    if turn==1:
-        player1_coin.place(x=Index[r][0],y=Index[r][1])
-    else:
-        player2_coin.place(x=Index[r][0],y=Index[r][1])
 
 def get_index():
     global player1_coin,player2_coin
@@ -124,25 +164,24 @@ def get_index():
         row = row + 45
     # print(Index)
 
+
 def quit_game():
     root.destroy()
 def start_game():
-    global im ,player1_btn,player2_btn
+
+    global im ,player1_btn
     # Player 1
-    player1_btn = tk.Button (root,text="Player 1",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
-    player1_btn.place(x=1000,y=0)
-    # Player 2
-    # player2_btn = tk.Button (root,text="Player 2",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
-    # player2_btn.place(x=1000,y=500)
+    player1_btn = tk.Button (root,text="Play",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
+    player1_btn.place(x=550,y=100)
     # quit 
     quit_btn = tk.Button (root,text="Quit",command=quit_game,height=3,width=16,bg="red",fg="black",font=("Cursive",16,"bold"),activebackground="white")
-    quit_btn.place(x=1000,y=600)
+    quit_btn.place(x=550,y=200)
     # dice
     im = Image.open("./images/0.png").resize((65, 65))
     im = ImageTk.PhotoImage(im)
     b2 = tk.Button(root, image=im)
     b2.image = im  
-    b2.place(x=1050, y=100)  
+    b2.place(x=550, y=300)  
 
 def reset_coins():
     global player1_coin,player2_coin ,position1,position2
