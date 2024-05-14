@@ -6,7 +6,7 @@ from threading import Thread
 
 s = socket(AF_INET, SOCK_STREAM)
 s.connect(('127.0.0.1', 8000))
-# GLOBALS
+
 Dice = []
 Index={} 
 Snakes={32:10,36:6,48:26,62:18,88:24,95:56,97:78}
@@ -127,10 +127,9 @@ def roll_dice():
 
         
     b2 = tk.Button(root,image=Dice[r-1],height=80,width=80)
-    # b2.place(x=1250,y=200)
     b2.image = Dice[r-1]
     b2.place(x=550, y=300)  
-    # print(Dice[r-1])
+
 player1_btn = tk.Button (root,text="Play",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
 def is_winner():
     global position1,position2
@@ -178,17 +177,15 @@ def quit_game():
 def start_game():
 
     global im ,player1_btn,turn
-    # Player 1
-    # player1_btn = tk.Button (root,text="Play",height=3,width=16,bg="red",fg="blue",font=("Cursive",16,"bold"),activebackground="white",command=roll_dice)
     player1_btn.place(x=550,y=100)
     if turn==1 or turn ==2:
         player1_btn.configure(state="normal")
     else:
         player1_btn.configure(state="disabled")
-    # quit 
+
     quit_btn = tk.Button (root,text="Quit",command=quit_game,height=3,width=16,bg="red",fg="black",font=("Cursive",16,"bold"),activebackground="white")
     quit_btn.place(x=550,y=200)
-    # dice
+
     im = Image.open("./images/0.png").resize((65, 65))
     im = ImageTk.PhotoImage(im)
     b2 = tk.Button(root, image=im)
