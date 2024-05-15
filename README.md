@@ -20,7 +20,7 @@ This is a GUI application for playing Snakes and Ladders over a network using so
 - Snakes and Ladders game logic.
 
 ## Screenshots
-(Include screenshots of your game here)
+![Snakes and Ladders Screenshot](./images/snakes.png)
 
 ## Future Improvements
 - Adding player names and customizable avatars.
