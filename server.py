@@ -4,14 +4,11 @@ import threading
 def client_handler(connection, otherclient):
     while True:
         try:
-            # Receive message from one client
             message = connection.recv(1024).decode()
             print(f"Received message: {message}")
-            # Forward message to the other client
             if otherclient:
                 otherclient.send(message.encode())
         except:
-            # An error occurred, break the loop
             print("An error occurred!")
             break
 
