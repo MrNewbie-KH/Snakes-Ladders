@@ -1,4 +1,6 @@
 # Snakes and Ladders Game
+![Snakes and Ladders Screenshot](./images/snakes.png)
+
 
 This is a GUI application for playing Snakes and Ladders over a network using socket programming. It allows two clients to connect to a server and play the game together.
 
